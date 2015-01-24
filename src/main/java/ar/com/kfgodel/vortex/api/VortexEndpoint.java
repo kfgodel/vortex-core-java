@@ -9,11 +9,11 @@ import ar.com.kfgodel.vortex.api.manifest.ReceiverManifest;
  */
 public interface VortexEndpoint {
 
-    VortexEmitter declareProducer(EmitterManifest emitterManifest);
+    VortexEmitter declareEmitter(EmitterManifest emitterManifest);
 
-    void retireProducer(VortexEmitter addedProducer);
+    void retireEmitter(VortexEmitter addedProducer);
 
-    VortexReceiver declareConsumer(ReceiverManifest receiverManifest);
+    VortexReceiver declareReceiver(ReceiverManifest receiverManifest);
 
-    void retireConsumer(VortexReceiver addedConsumer);
+    void retireReceiver(VortexReceiver addedConsumer);
 }

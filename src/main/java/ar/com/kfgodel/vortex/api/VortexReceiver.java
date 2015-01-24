@@ -4,19 +4,20 @@ import java.util.List;
 import java.util.function.Consumer;
 
 /**
+ * This type represents a message receiver
  * Created by kfgodel on 18/01/15.
  */
 public interface VortexReceiver {
 
-    boolean isInterestedIn(VortexEmitter producerManifest);
+    boolean isInterestedIn(VortexEmitter emitter);
 
-    void addActiveProducer(VortexEmitter newProducer);
-    void removeActiveProducer(VortexEmitter producer);
+    void addActiveEmitter(VortexEmitter newEmitter);
+    void removeActiveEmitter(VortexEmitter emitter);
 
-    void connectWith(List<VortexEmitter> interestingProducers);
+    void connectWith(List<VortexEmitter> interestingEmitters);
     void disconnectAll();
 
     Consumer<Object> getActiveStream();
 
-    void updateConnectionsWith(List<VortexEmitter> newInterestingProducers);
+    void updateConnectionsWith(List<VortexEmitter> newInterestingEmitters);
 }

@@ -15,73 +15,73 @@ import java.util.stream.Collectors;
  */
 public class EndpointImpl implements VortexEndpoint {
 
-    private List<VortexEmitter> producers;
-    private List<VortexReceiver> consumers;
+    private List<VortexEmitter> emitters;
+    private List<VortexReceiver> receivers;
 
     public static EndpointImpl create(){
-        EndpointImpl node = new EndpointImpl();
-        node.consumers = new ArrayList<>();
-        node.producers = new ArrayList<>();
-        return node;
+        EndpointImpl endpoint = new EndpointImpl();
+        endpoint.receivers = new ArrayList<>();
+        endpoint.emitters = new ArrayList<>();
+        return endpoint;
     }
 
     @Override
-    public VortexEmitter declareProducer(EmitterManifest emitterManifest) {
-        VortexEmitter newProducer = EmitterImpl.create(emitterManifest);
+    public VortexEmitter declareEmitter(EmitterManifest emitterManifest) {
+        VortexEmitter newEmitter = EmitterImpl.create(emitterManifest);
 
-        List<VortexReceiver> interestedConsumers = calculateConsumersFor(newProducer);
-        newProducer.connectWith(interestedConsumers);
+        List<VortexReceiver> interestedReceivers = calculateReceiversFor(newEmitter);
+        newEmitter.connectWith(interestedReceivers);
 
-        producers.add(newProducer);
-        emitterManifest.setInterestChangeListener(() -> onProducerInterestChanged(newProducer));
-        return newProducer;
+        emitters.add(newEmitter);
+        emitterManifest.setInterestChangeListener(() -> onEmitterInterestChanged(newEmitter));
+        return newEmitter;
     }
 
     @Override
-    public void retireProducer(VortexEmitter producer) {
-        producers.remove(producer);
-        producer.disconnectAll();
+    public void retireEmitter(VortexEmitter emitter) {
+        emitters.remove(emitter);
+        emitter.disconnectAll();
     }
 
     @Override
-    public VortexReceiver declareConsumer(ReceiverManifest receiverManifest) {
-        ReceiverImpl newConsumer = ReceiverImpl.create(receiverManifest);
+    public VortexReceiver declareReceiver(ReceiverManifest receiverManifest) {
+        ReceiverImpl newReceiver = ReceiverImpl.create(receiverManifest);
 
-        List<VortexEmitter> interestingProducers = calculateProducersFor(newConsumer);
-        newConsumer.connectWith(interestingProducers);
+        List<VortexEmitter> interestingEmitters = calculateEmittersFor(newReceiver);
+        newReceiver.connectWith(interestingEmitters);
 
-        consumers.add(newConsumer);
-        receiverManifest.setInterestChangeListener(() -> onConsumerInterestChanged(newConsumer));
-        return newConsumer;
+        receivers.add(newReceiver);
+        receiverManifest.setInterestChangeListener(() -> onReceiverInterestChanged(newReceiver));
+        return newReceiver;
     }
 
-    private List<VortexEmitter> calculateProducersFor(VortexReceiver newConsumer) {
-        return producers.stream()
-                    .filter(newConsumer::isInterestedIn)
+    private List<VortexEmitter> calculateEmittersFor(VortexReceiver newReceiver) {
+        return emitters.stream()
+                    .filter(newReceiver::isInterestedIn)
                     .collect(Collectors.toList());
     }
-    private List<VortexReceiver> calculateConsumersFor(VortexEmitter newProducer) {
-        return consumers.stream()
-                .filter((consumer) -> consumer.isInterestedIn(newProducer))
+    private List<VortexReceiver> calculateReceiversFor(VortexEmitter newEmitter) {
+        return receivers.stream()
+                .filter((receiver) -> receiver.isInterestedIn(newEmitter))
                 .collect(Collectors.toList());
     }
 
 
-    private void onConsumerInterestChanged(VortexReceiver changedConsumer) {
-        List<VortexEmitter> newInterestingProducers = calculateProducersFor(changedConsumer);
-        changedConsumer.updateConnectionsWith(newInterestingProducers);
+    private void onReceiverInterestChanged(VortexReceiver changedReceiver) {
+        List<VortexEmitter> newInterestingProducers = calculateEmittersFor(changedReceiver);
+        changedReceiver.updateConnectionsWith(newInterestingProducers);
     }
 
-    private void onProducerInterestChanged(VortexEmitter changedProducer) {
-        List<VortexReceiver> newInterestedConsumers = calculateConsumersFor(changedProducer);
-        changedProducer.updateConnectionsWith(newInterestedConsumers);
+    private void onEmitterInterestChanged(VortexEmitter changedEmitter) {
+        List<VortexReceiver> newInterestedConsumers = calculateReceiversFor(changedEmitter);
+        changedEmitter.updateConnectionsWith(newInterestedConsumers);
     }
 
 
     @Override
-    public void retireConsumer(VortexReceiver consumer) {
-        consumers.remove(consumer);
-        consumer.disconnectAll();
+    public void retireReceiver(VortexReceiver receiver) {
+        receivers.remove(receiver);
+        receiver.disconnectAll();
     }
 
 }

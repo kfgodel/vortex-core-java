@@ -35,7 +35,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                 Variable<Consumer<Object>> producerStreamHolder = Variable.create();
                 Consumer<Consumer<Object>> consumerAvailabilityHandler = (stream)-> producerStreamHolder.set(stream);
                 EmitterManifestImpl producerManifest = EmitterManifestImpl.create(AllInterest.INSTANCE, consumerAvailabilityHandler);
-                context().node().declareProducer(producerManifest);
+                context().node().declareEmitter(producerManifest);
 
                 // The consumer declaration to mock the reception of the message
                 Consumer<Object> mockedConsumerStream = mock(Consumer.class);
@@ -81,7 +81,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                             declareConsumer(AllInterest.INSTANCE, producerUnavailabilityHandler);
 
                             //Let's remove the producer to get notified
-                            context().node().retireProducer(producer);
+                            context().node().retireEmitter(producer);
 
                             verify(producerUnavailabilityHandler).run();
                         });
@@ -92,7 +92,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             Supplier<Consumer<Object>> producerAvailabilityHandler = mockConsumerAvailabilityHandler();
                             ReceiverManifestImpl consumerManifest = ReceiverManifestImpl.create(NoInterest.INSTANCE, producerAvailabilityHandler);
-                            context().node().declareConsumer(consumerManifest);
+                            context().node().declareReceiver(consumerManifest);
 
                             consumerManifest.changeInterest(AllInterest.INSTANCE);
 
@@ -103,7 +103,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             Runnable producerUnavailabilityHandler = mock(Runnable.class);
                             ReceiverManifestImpl consumerManifest = ReceiverManifestImpl.create(AllInterest.INSTANCE, mock(Supplier.class), producerUnavailabilityHandler);
-                            context().node().declareConsumer(consumerManifest);
+                            context().node().declareReceiver(consumerManifest);
 
                             consumerManifest.changeInterest(NoInterest.INSTANCE);
 
@@ -148,7 +148,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                                 Runnable producerUnavailabilityHandler = mock(Runnable.class);
                                 declareConsumer(NoInterest.INSTANCE,  producerUnavailabilityHandler);
 
-                                context().node().retireProducer(producer);
+                                context().node().retireEmitter(producer);
 
                                 verify(producerUnavailabilityHandler, never()).run();
                             });
@@ -168,7 +168,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             Supplier<Consumer<Object>> producerAvailabilityHandler = mockConsumerAvailabilityHandler();
                             ReceiverManifestImpl consumerManifest = ReceiverManifestImpl.create(NoInterest.INSTANCE, producerAvailabilityHandler);
-                            context().node().declareConsumer(consumerManifest);
+                            context().node().declareReceiver(consumerManifest);
 
                             consumerManifest.changeInterest(NoInterest.INSTANCE);
 
@@ -179,7 +179,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             Runnable producerUnavailabilityHandler = mock(Runnable.class);
                             ReceiverManifestImpl consumerManifest = ReceiverManifestImpl.create(AllInterest.INSTANCE, mock(Supplier.class), producerUnavailabilityHandler);
-                            context().node().declareConsumer(consumerManifest);
+                            context().node().declareReceiver(consumerManifest);
 
                             consumerManifest.changeInterest(AllInterest.INSTANCE);
 
@@ -219,7 +219,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                             Runnable consumerUnavailabilityHandler = mock(Runnable.class);
                             declareProducer(AllInterest.INSTANCE, consumerUnavailabilityHandler);
 
-                            context().node().retireConsumer(consumer);
+                            context().node().retireReceiver(consumer);
 
                             verify(consumerUnavailabilityHandler).run();
                         });
@@ -230,7 +230,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             Consumer<Consumer<Object>> consumerAvailabilityHandler = mock(Consumer.class);
                             EmitterManifestImpl producerManifest = EmitterManifestImpl.create(NoInterest.INSTANCE, consumerAvailabilityHandler);
-                            context().node().declareProducer(producerManifest);
+                            context().node().declareEmitter(producerManifest);
 
                             producerManifest.changeInterest(AllInterest.INSTANCE);
 
@@ -242,7 +242,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             Runnable consumerUnavailabilityHandler = mock(Runnable.class);
                             EmitterManifestImpl producerManifest = EmitterManifestImpl.create(AllInterest.INSTANCE, mock(Consumer.class), consumerUnavailabilityHandler);
-                            context().node().declareProducer(producerManifest);
+                            context().node().declareEmitter(producerManifest);
 
                             producerManifest.changeInterest(NoInterest.INSTANCE);
 
@@ -287,7 +287,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                                 Runnable consumerUnavailabilityHandler = mock(Runnable.class);
                                 declareProducer(NoInterest.INSTANCE, consumerUnavailabilityHandler);
 
-                                context().node().retireConsumer(consumer);
+                                context().node().retireReceiver(consumer);
 
                                 verify(consumerUnavailabilityHandler, never()).run();
                             });
@@ -307,7 +307,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             Consumer<Consumer<Object>> consumerAvailabilityHandler = mock(Consumer.class);
                             EmitterManifestImpl producerManifest = EmitterManifestImpl.create(NoInterest.INSTANCE, consumerAvailabilityHandler);
-                            context().node().declareProducer(producerManifest);
+                            context().node().declareEmitter(producerManifest);
 
                             producerManifest.changeInterest(NoInterest.INSTANCE);
 
@@ -318,7 +318,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             Runnable consumerUnavailabilityHandler = mock(Runnable.class);
                             EmitterManifestImpl producerManifest = EmitterManifestImpl.create(NoInterest.INSTANCE, mock(Consumer.class), consumerUnavailabilityHandler);
-                            context().node().declareProducer(producerManifest);
+                            context().node().declareEmitter(producerManifest);
 
                             producerManifest.changeInterest(AllInterest.INSTANCE);
 
@@ -333,17 +333,17 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
     private VortexReceiver declareConsumer(VortexInterest interest) {
         ReceiverManifestImpl consumerManifest = ReceiverManifestImpl.create(interest, mockConsumerAvailabilityHandler());
-        return context().node().declareConsumer(consumerManifest);
+        return context().node().declareReceiver(consumerManifest);
     }
 
     private void declareConsumer(VortexInterest interest, Supplier<Consumer<Object>> producerAvailabilityHandler) {
         ReceiverManifestImpl consumerManifest = ReceiverManifestImpl.create(interest, producerAvailabilityHandler);
-        context().node().declareConsumer(consumerManifest);
+        context().node().declareReceiver(consumerManifest);
     }
 
     private void declareConsumer(VortexInterest interest, Runnable producerUnavailabilityHandler) {
         ReceiverManifestImpl consumerManifest = ReceiverManifestImpl.create(interest, mock(Supplier.class), producerUnavailabilityHandler);
-        context().node().declareConsumer(consumerManifest);
+        context().node().declareReceiver(consumerManifest);
     }
 
 
@@ -355,17 +355,17 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
     private VortexEmitter declareProducer(VortexInterest producerInterest) {
         EmitterManifestImpl producerManifest = EmitterManifestImpl.create(producerInterest, mock(Consumer.class));
-        return context().node().declareProducer(producerManifest);
+        return context().node().declareEmitter(producerManifest);
     }
 
     private VortexEmitter declareProducer(VortexInterest producerInterest, Consumer<Consumer<Object>> consumerAvailabilityHandler) {
         EmitterManifestImpl producerManifest = EmitterManifestImpl.create(producerInterest, consumerAvailabilityHandler);
-        return context().node().declareProducer(producerManifest);
+        return context().node().declareEmitter(producerManifest);
     }
 
     private VortexEmitter declareProducer(VortexInterest producerInterest, Runnable consumerUnavailabilityHandler ) {
         EmitterManifestImpl producerManifest = EmitterManifestImpl.create(producerInterest, mock(Consumer.class), consumerUnavailabilityHandler);
-        return context().node().declareProducer(producerManifest);
+        return context().node().declareEmitter(producerManifest);
     }
 
 }

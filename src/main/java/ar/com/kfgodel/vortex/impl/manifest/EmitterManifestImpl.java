@@ -11,29 +11,29 @@ import java.util.function.Consumer;
  */
 public class EmitterManifestImpl implements EmitterManifest {
 
-    private VortexInterest producerInterest;
-    private Consumer<Consumer<Object>> connectionHandler;
-    private Runnable disconnectionHandler;
+    private VortexInterest emitterInterest;
+    private Consumer<Consumer<Object>> availabilityHandler;
+    private Runnable unavailabilityHandler;
     private Runnable interestChangeListener;
 
     @Override
-    public void onConsumersAvailable(Consumer<Object> stream) {
-        this.connectionHandler.accept(stream);
+    public void onReceiversAvailable(Consumer<Object> stream) {
+        this.availabilityHandler.accept(stream);
     }
 
     @Override
-    public void onNoConsumersAvailable() {
-        this.disconnectionHandler.run();
+    public void onNoReceiversAvailable() {
+        this.unavailabilityHandler.run();
     }
 
     @Override
     public VortexInterest getInterest() {
-        return producerInterest;
+        return emitterInterest;
     }
 
     @Override
     public void changeInterest(VortexInterest newInterest) {
-        this.producerInterest = newInterest;
+        this.emitterInterest = newInterest;
         interestChangeListener.run();
     }
 
@@ -42,16 +42,16 @@ public class EmitterManifestImpl implements EmitterManifest {
         this.interestChangeListener = changeListener;
     }
 
-    public static EmitterManifestImpl create(VortexInterest interest, Consumer<Consumer<Object>> connectionHandler, Runnable disconnectionHandler) {
+    public static EmitterManifestImpl create(VortexInterest interest, Consumer<Consumer<Object>> availabilityHandler, Runnable unavailabilityHandler) {
         EmitterManifestImpl manifest = new EmitterManifestImpl();
-        manifest.producerInterest = interest;
-        manifest.connectionHandler = connectionHandler;
-        manifest.disconnectionHandler = disconnectionHandler;
+        manifest.emitterInterest = interest;
+        manifest.availabilityHandler = availabilityHandler;
+        manifest.unavailabilityHandler = unavailabilityHandler;
         manifest.interestChangeListener = NoOp.INSTANCE;
         return manifest;
     }
 
-    public static EmitterManifestImpl create(VortexInterest interest, Consumer<Consumer<Object>> connectionHandler) {
-        return create(interest, connectionHandler, NoOp.INSTANCE);
+    public static EmitterManifestImpl create(VortexInterest interest, Consumer<Consumer<Object>> availabilityHandler) {
+        return create(interest, availabilityHandler, NoOp.INSTANCE);
     }
 }

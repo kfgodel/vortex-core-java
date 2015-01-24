@@ -8,9 +8,9 @@ import java.util.function.Consumer;
  */
 public interface ReceiverManifest {
 
-    Consumer<Object> onAvailableProducers();
+    Consumer<Object> onEmittersAvailable();
 
-    void onNoAvailableProducers();
+    void onNoEmittersAvailable();
 
     boolean isCompatibleWith(EmitterManifest emitterManifest);
 

@@ -17,19 +17,19 @@ import java.util.function.Consumer;
 public class ReceiverImpl implements VortexReceiver {
 
     private ReceiverManifest manifest;
-    private List<VortexEmitter> activeProducers;
+    private List<VortexEmitter> activeEmitters;
     private Consumer<Object> activeStream;
 
     public static ReceiverImpl create(ReceiverManifest manifest) {
-        ReceiverImpl consumer = new ReceiverImpl();
-        consumer.manifest = manifest;
-        consumer.activeProducers = new ArrayList<>();
-        return consumer;
+        ReceiverImpl receiver = new ReceiverImpl();
+        receiver.manifest = manifest;
+        receiver.activeEmitters = new ArrayList<>();
+        return receiver;
     }
 
     @Override
-    public boolean isInterestedIn(VortexEmitter producer) {
-        return this.manifest.isCompatibleWith(producer.getManifest());
+    public boolean isInterestedIn(VortexEmitter emitter) {
+        return this.manifest.isCompatibleWith(emitter.getManifest());
     }
 
 
@@ -43,54 +43,54 @@ public class ReceiverImpl implements VortexReceiver {
     }
 
     @Override
-    public void updateConnectionsWith(List<VortexEmitter> newInterestingProducers) {
-        MergeResult<VortexEmitter> merged = Collections.merge(activeProducers, newInterestingProducers);
-        merged.getAdded().forEach((addedProducer)-> addedProducer.connectWith(this));
-        merged.getRemoved().forEach((removedProducer)-> removedProducer.disconnectFrom(this));
+    public void updateConnectionsWith(List<VortexEmitter> newInterestingEmitters) {
+        MergeResult<VortexEmitter> merged = Collections.merge(activeEmitters, newInterestingEmitters);
+        merged.getAdded().forEach((addedEmitter)-> addedEmitter.connectWith(this));
+        merged.getRemoved().forEach((removedEmitter)-> removedEmitter.disconnectFrom(this));
     }
 
     @Override
-    public void connectWith(List<VortexEmitter> interestingProducers) {
-        interestingProducers.forEach((producer) -> {
-            producer.connectWith(this);
+    public void connectWith(List<VortexEmitter> interestingEmitters) {
+        interestingEmitters.forEach((emitter) -> {
+            emitter.connectWith(this);
         });
     }
     @Override
     public void disconnectAll() {
         // Assigned to temp list in order to be able to remove from original list
-        List<VortexEmitter> disconnected = new ArrayList<>(activeProducers);
-        disconnected.forEach((producer) -> {
-            producer.disconnectFrom(this);
+        List<VortexEmitter> disconnected = new ArrayList<>(activeEmitters);
+        disconnected.forEach((emitter) -> {
+            emitter.disconnectFrom(this);
         });
     }
 
     @Override
-    public void addActiveProducer(VortexEmitter newProducer) {
+    public void addActiveEmitter(VortexEmitter newEmitter) {
         notifyingChangesToManifest(()->{
-            activeProducers.add(newProducer);
+            activeEmitters.add(newEmitter);
         });
     }
     @Override
-    public void removeActiveProducer(VortexEmitter producer) {
+    public void removeActiveEmitter(VortexEmitter emitter) {
         notifyingChangesToManifest(() -> {
-            activeProducers.remove(producer);
+            activeEmitters.remove(emitter);
         });
     }
 
     private void notifyingChangesToManifest(Runnable code){
-        boolean wasActive = hasActiveProducers();
+        boolean wasActive = hasActiveEmitters();
         code.run();
-        boolean isActive = hasActiveProducers();
+        boolean isActive = hasActiveEmitters();
         if(isActive && !wasActive){
-            this.activeStream = manifest.onAvailableProducers();
+            this.activeStream = manifest.onEmittersAvailable();
         }else if(!isActive && wasActive){
-            manifest.onNoAvailableProducers();
+            manifest.onNoEmittersAvailable();
             this.activeStream = null;
         }
     }
 
-    private boolean hasActiveProducers() {
-        return this.activeProducers.size() > 0;
+    private boolean hasActiveEmitters() {
+        return this.activeEmitters.size() > 0;
     }
 
 }

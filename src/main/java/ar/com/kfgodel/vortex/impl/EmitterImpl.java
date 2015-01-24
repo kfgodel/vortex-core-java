@@ -17,13 +17,13 @@ import java.util.function.Consumer;
 public class EmitterImpl implements VortexEmitter, Consumer<Object> {
 
     private EmitterManifest manifest;
-    private List<VortexReceiver> activeConsumers;
+    private List<VortexReceiver> activeReceivers;
 
     public static EmitterImpl create(EmitterManifest manifest) {
-        EmitterImpl producer = new EmitterImpl();
-        producer.manifest = manifest;
-        producer.activeConsumers = new ArrayList<>();
-        return producer;
+        EmitterImpl emitter = new EmitterImpl();
+        emitter.manifest = manifest;
+        emitter.activeReceivers = new ArrayList<>();
+        return emitter;
     }
 
     @Override
@@ -32,74 +32,74 @@ public class EmitterImpl implements VortexEmitter, Consumer<Object> {
     }
 
     @Override
-    public void connectWith(List<VortexReceiver> consumers) {
+    public void connectWith(List<VortexReceiver> interestedReceivers) {
         notifyingChangesToManifest(() -> {
-            consumers.forEach(this::addActiveConsumer);
+            interestedReceivers.forEach(this::addActiveReceiver);
         });
     }
     @Override
-    public void connectWith(VortexReceiver consumer) {
+    public void connectWith(VortexReceiver receiver) {
         notifyingChangesToManifest(() -> {
-            addActiveConsumer(consumer);
+            addActiveReceiver(receiver);
         });
     }
 
     @Override
     public void disconnectAll() {
         // Assigned to temp list in order to be able to remove from original list
-        List<VortexReceiver> disconnected = new ArrayList<>(activeConsumers);
+        List<VortexReceiver> disconnected = new ArrayList<>(activeReceivers);
         notifyingChangesToManifest(() -> {
-            disconnected.forEach(this::removeActiveConsumer);
+            disconnected.forEach(this::removeActiveReceiver);
         });
     }
 
     @Override
-    public void disconnectFrom(VortexReceiver consumer) {
+    public void disconnectFrom(VortexReceiver receiver) {
         notifyingChangesToManifest(() -> {
-            this.removeActiveConsumer(consumer);
+            this.removeActiveReceiver(receiver);
         });
     }
 
     @Override
-    public void updateConnectionsWith(List<VortexReceiver> newInterestedConsumers) {
-        MergeResult<VortexReceiver> merged = Collections.merge(activeConsumers, newInterestedConsumers);
+    public void updateConnectionsWith(List<VortexReceiver> newInterestedReceivers) {
+        MergeResult<VortexReceiver> merged = Collections.merge(activeReceivers, newInterestedReceivers);
         notifyingChangesToManifest(()->{
-            merged.getRemoved().forEach(this::removeActiveConsumer);
-            merged.getAdded().forEach(this::addActiveConsumer);
+            merged.getRemoved().forEach(this::removeActiveReceiver);
+            merged.getAdded().forEach(this::addActiveReceiver);
         });
 
     }
 
-    private void removeActiveConsumer(VortexReceiver consumer) {
-        activeConsumers.remove(consumer);
-        consumer.removeActiveProducer(this);
+    private void removeActiveReceiver(VortexReceiver receiver) {
+        activeReceivers.remove(receiver);
+        receiver.removeActiveEmitter(this);
     }
 
-    private void addActiveConsumer(VortexReceiver consumer) {
-        consumer.addActiveProducer(this);
-        activeConsumers.add(consumer);
+    private void addActiveReceiver(VortexReceiver receiver) {
+        receiver.addActiveEmitter(this);
+        activeReceivers.add(receiver);
     }
 
     private void notifyingChangesToManifest(Runnable code){
-        boolean wasActive = hasActiveConsumers();
+        boolean wasActive = hasActiveReceivers();
         code.run();
-        boolean isActive = hasActiveConsumers();
+        boolean isActive = hasActiveReceivers();
         if(isActive && !wasActive){
-            manifest.onConsumersAvailable(this);
+            manifest.onReceiversAvailable(this);
         }else if(!isActive && wasActive){
-            manifest.onNoConsumersAvailable();
+            manifest.onNoReceiversAvailable();
         }
     }
 
-    private boolean hasActiveConsumers() {
-        return this.activeConsumers.size() > 0;
+    private boolean hasActiveReceivers() {
+        return this.activeReceivers.size() > 0;
     }
 
     @Override
     public void accept(Object message) {
-        for (VortexReceiver activeConsumer : activeConsumers) {
-            Consumer<Object> consumerStream = activeConsumer.getActiveStream();
-            consumerStream.accept(message);
+        for (VortexReceiver activeReceiver : activeReceivers) {
+            Consumer<Object> receiverStream = activeReceiver.getActiveStream();
+            receiverStream.accept(message);
         }
     }
 }
