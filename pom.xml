@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ar.com.kfgodel</groupId>
   <artifactId>vortex-core-java</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>0.5-SNAPSHOT</version>
   <name>Vortex Core Java</name>
   <description>A Java implementation of vortex core elements for communication</description>
   
