@@ -1,6 +1,9 @@
 package ar.com.dgarcia.vortex;
 
-import app.ar.com.dgarcia.processing.sandbox.vortex.*;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexConsumer;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexInterest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexProducer;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
 import app.ar.com.dgarcia.processing.sandbox.vortex.impl.*;
 import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
@@ -37,7 +40,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                 declareConsumer(AllInterest.INSTANCE, producerAvailabilityHandler);
 
                 // We send a message in one end and verify we received it in the other
-                VortexMessage sentMessage = mock(VortexMessage.class);
+                Object sentMessage = new Object();
                 producerStreamHolder.get().receive(sentMessage);
 
                 // It should be the exact same message

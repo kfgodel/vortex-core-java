@@ -2,7 +2,10 @@ package app.ar.com.dgarcia.processing.sandbox.vortex.impl;
 
 import app.ar.com.dgarcia.processing.sandbox.iterables.Collections;
 import app.ar.com.dgarcia.processing.sandbox.iterables.MergeResult;
-import app.ar.com.dgarcia.processing.sandbox.vortex.*;
+import app.ar.com.dgarcia.processing.sandbox.vortex.ProducerManifest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexConsumer;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexProducer;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +96,7 @@ public class ProducerImpl implements VortexProducer, VortexStream {
     }
 
     @Override
-    public void receive(VortexMessage message) {
+    public void receive(Object message) {
         for (VortexConsumer activeConsumer : activeConsumers) {
             VortexStream consumerStream = activeConsumer.getActiveStream();
             consumerStream.receive(message);
