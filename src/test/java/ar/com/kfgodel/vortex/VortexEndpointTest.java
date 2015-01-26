@@ -4,9 +4,11 @@ import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
 import ar.com.dgarcia.javaspec.api.Variable;
 import ar.com.kfgodel.vortex.api.VortexEmitter;
+import ar.com.kfgodel.vortex.api.VortexEndpoint;
 import ar.com.kfgodel.vortex.api.VortexReceiver;
 import ar.com.kfgodel.vortex.api.manifest.VortexInterest;
-import ar.com.kfgodel.vortex.impl.EndpointImpl;
+import ar.com.kfgodel.vortex.impl.connection.ConnectionHandlerImpl;
+import ar.com.kfgodel.vortex.impl.connection.InMemoryNet;
 import ar.com.kfgodel.vortex.impl.manifest.AllInterest;
 import ar.com.kfgodel.vortex.impl.manifest.EmitterManifestImpl;
 import ar.com.kfgodel.vortex.impl.manifest.NoInterest;
@@ -16,6 +18,7 @@ import org.junit.runner.RunWith;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,7 +31,20 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
     public void define() {
         describe("vortex endpoint", ()->{
 
-            context().node(EndpointImpl::create);
+            it("is obtained from a vortex net connection",()->{
+                Variable<VortexEndpoint> endpointHolder = Variable.create();
+
+                InMemoryNet vortexNet = InMemoryNet.create();
+                vortexNet.connect(ConnectionHandlerImpl.create(endpointHolder::set));
+
+                assertThat(endpointHolder.get()).isNotNull();
+            });
+            
+            context().node(()->{
+                Variable<VortexEndpoint> createdEndpoint = Variable.create();
+                InMemoryNet.create().connect(ConnectionHandlerImpl.create(createdEndpoint::set));
+                return createdEndpoint.get();
+            });
             
             it("allows message passing between consumer and producer",()->{
                 // The consumer declaration to hold the communication stream in a variable

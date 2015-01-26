@@ -1,5 +1,6 @@
 package ar.com.kfgodel.vortex.impl.connection;
 
+import ar.com.kfgodel.lang.NoOp;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
 import ar.com.kfgodel.vortex.api.connection.ConnectionHandler;
 
@@ -29,6 +30,10 @@ public class ConnectionHandlerImpl implements ConnectionHandler {
         handler.connectionHandler = connectionHandler;
         handler.disconnectionHandler = disconnectionHandler;
         return handler;
+    }
+
+    public static ConnectionHandlerImpl create(Consumer<VortexEndpoint> connectionHandler) {
+        return create(connectionHandler, NoOp.INSTANCE);
     }
 
 }

@@ -9,4 +9,6 @@ public interface VortexConnection {
     void disconnect();
 
     void connect();
+
+    VortexNet getOwnerNet();
 }

@@ -3,6 +3,7 @@ package ar.com.kfgodel.vortex.impl;
 import ar.com.kfgodel.vortex.api.VortexEmitter;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
 import ar.com.kfgodel.vortex.api.VortexReceiver;
+import ar.com.kfgodel.vortex.api.connection.VortexConnection;
 import ar.com.kfgodel.vortex.api.manifest.EmitterManifest;
 import ar.com.kfgodel.vortex.api.manifest.ReceiverManifest;
 
@@ -15,13 +16,15 @@ import java.util.stream.Collectors;
  */
 public class EndpointImpl implements VortexEndpoint {
 
+    private VortexConnection ownerConnection;
     private List<VortexEmitter> emitters;
     private List<VortexReceiver> receivers;
 
-    public static EndpointImpl create(){
+    public static EndpointImpl create(VortexConnection ownerConnection){
         EndpointImpl endpoint = new EndpointImpl();
         endpoint.receivers = new ArrayList<>();
         endpoint.emitters = new ArrayList<>();
+        endpoint.ownerConnection = ownerConnection;
         return endpoint;
     }
 
@@ -82,6 +85,11 @@ public class EndpointImpl implements VortexEndpoint {
     public void retireReceiver(VortexReceiver receiver) {
         receivers.remove(receiver);
         receiver.disconnectAll();
+    }
+
+    @Override
+    public VortexConnection getOwnerConnection() {
+        return ownerConnection;
     }
 
 }
