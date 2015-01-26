@@ -1,5 +1,6 @@
 package ar.com.kfgodel.vortex.api;
 
+import ar.com.kfgodel.vortex.api.connection.VortexConnection;
 import ar.com.kfgodel.vortex.api.manifest.EmitterManifest;
 import ar.com.kfgodel.vortex.api.manifest.ReceiverManifest;
 
@@ -16,4 +17,6 @@ public interface VortexEndpoint {
     VortexReceiver declareReceiver(ReceiverManifest receiverManifest);
 
     void retireReceiver(VortexReceiver addedConsumer);
+
+    VortexConnection getOwnerConnection();
 }
