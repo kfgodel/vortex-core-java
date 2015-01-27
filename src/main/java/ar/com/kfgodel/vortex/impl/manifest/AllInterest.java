@@ -15,4 +15,9 @@ public class AllInterest implements VortexInterest {
         // Interseccion con vacio da vacio
         return true && !otherInterest.equals(NoInterest.INSTANCE);
     }
+
+    @Override
+    public boolean contains(Object message) {
+        return true;
+    }
 }

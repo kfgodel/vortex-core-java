@@ -50,6 +50,11 @@ public class ReceiverImpl implements VortexReceiver {
     }
 
     @Override
+    public boolean shouldReceive(Object message) {
+        return manifest.appliesTo(message);
+    }
+
+    @Override
     public void connectWith(List<VortexEmitter> interestingEmitters) {
         interestingEmitters.forEach((emitter) -> {
             emitter.connectWith(this);

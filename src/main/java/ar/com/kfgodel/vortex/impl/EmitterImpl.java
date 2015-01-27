@@ -97,9 +97,9 @@ public class EmitterImpl implements VortexEmitter, Consumer<Object> {
 
     @Override
     public void accept(Object message) {
-        for (VortexReceiver activeReceiver : activeReceivers) {
-            Consumer<Object> receiverStream = activeReceiver.getActiveStream();
-            receiverStream.accept(message);
-        }
+        activeReceivers.stream()
+                .filter((activeReceiver)-> activeReceiver.shouldReceive(message))
+                .map(VortexReceiver::getActiveStream)
+                .forEach((receiverStream) -> receiverStream.accept(message));
     }
 }

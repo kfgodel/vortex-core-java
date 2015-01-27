@@ -14,4 +14,9 @@ public class NoInterest implements VortexInterest {
     public boolean intersects(VortexInterest producerInterest) {
         return false;
     }
+
+    @Override
+    public boolean contains(Object message) {
+        return false;
+    }
 }

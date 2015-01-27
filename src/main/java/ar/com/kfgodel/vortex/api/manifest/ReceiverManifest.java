@@ -17,4 +17,6 @@ public interface ReceiverManifest {
     VortexInterest getInterest();
     void changeInterest(VortexInterest newInterest);
     void setInterestChangeListener(Runnable changeListener);
+
+    boolean appliesTo(Object message);
 }

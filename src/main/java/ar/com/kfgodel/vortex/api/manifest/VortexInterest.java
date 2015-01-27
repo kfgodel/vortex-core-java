@@ -5,4 +5,6 @@ package ar.com.kfgodel.vortex.api.manifest;
  */
 public interface VortexInterest {
     boolean intersects(VortexInterest producerInterest);
+
+    boolean contains(Object message);
 }

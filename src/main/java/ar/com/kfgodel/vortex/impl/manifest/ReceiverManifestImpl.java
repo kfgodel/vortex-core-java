@@ -50,6 +50,11 @@ public class ReceiverManifestImpl implements ReceiverManifest {
         this.interestChangeListener = changeListener;
     }
 
+    @Override
+    public boolean appliesTo(Object message) {
+        return receiverInterest.contains(message);
+    }
+
     public static ReceiverManifestImpl create(VortexInterest interest, Supplier<Consumer<Object>> availabilityHandler, Runnable unavailabilityHandler) {
         ReceiverManifestImpl manifest = new ReceiverManifestImpl();
         manifest.receiverInterest = interest;

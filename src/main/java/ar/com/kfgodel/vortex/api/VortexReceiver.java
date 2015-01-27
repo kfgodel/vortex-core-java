@@ -20,4 +20,6 @@ public interface VortexReceiver {
     Consumer<Object> getActiveStream();
 
     void updateConnectionsWith(List<VortexEmitter> newInterestingEmitters);
+
+    boolean shouldReceive(Object message);
 }
