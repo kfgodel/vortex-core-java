@@ -11,7 +11,7 @@ public class NoInterest implements VortexInterest {
     public static NoInterest INSTANCE = new NoInterest();
 
     @Override
-    public boolean intersects(VortexInterest producerInterest) {
+    public boolean intersects(VortexInterest otherInterest) {
         return false;
     }
 
